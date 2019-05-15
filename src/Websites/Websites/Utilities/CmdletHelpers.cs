@@ -45,6 +45,9 @@ namespace Microsoft.Azure.Commands.WebApps.Utilities
         private static readonly Regex AppServicePlanResourceIdRegex =
            new Regex(@"^\/subscriptions\/(?<subscriptionName>[^\/]+)\/resourceGroups\/(?<resourceGroupName>[^\/]+)\/providers\/Microsoft.Web\/serverFarms\/(?<serverFarmName>[^\/]+)$", RegexOptions.IgnoreCase);
 
+        private static readonly Regex AppServiceEnvironmentResourceIdRegex =
+               new Regex(@"^\/subscriptions\/(?<subscriptionName>[^\/]+)\/resourceGroups\/(?<resourceGroupName>[^\/]+)\/providers\/Microsoft.Web\/hostingEnvironments\/(?<serverFarmName>[^\/]+)$", RegexOptions.IgnoreCase);
+
         private static readonly Dictionary<string, int> WorkerSizes = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase) { { "Small", 1 }, { "Medium", 2 }, { "Large", 3 }, { "ExtraLarge", 4 } };
 
         private const string ProductionSlotName = "Production";
@@ -262,7 +265,25 @@ namespace Microsoft.Azure.Commands.WebApps.Utilities
             return false;
         }
 
-        internal static string GetSkuName(string tier, int workerSize)
+        internal static bool TryParseAppServiceEnvironmentMetadataFromResourceId(string resourceId, out string resourceGroupName,
+                out string appServiceEnvironmentName)
+        {
+          var match = AppServiceEnvironmentResourceIdRegex.Match(resourceId);
+          if (match.Success)
+          {
+            resourceGroupName = match.Groups["resourceGroupName"].Value;
+            appServiceEnvironmentName = match.Groups["serverFarmName"].Value;
+
+            return true;
+          }
+
+          resourceGroupName = null;
+          appServiceEnvironmentName = null;
+
+          return false;
+        }
+
+    internal static string GetSkuName(string tier, int workerSize)
         {
             string sku;
             if (string.Equals("Shared", tier, StringComparison.OrdinalIgnoreCase))

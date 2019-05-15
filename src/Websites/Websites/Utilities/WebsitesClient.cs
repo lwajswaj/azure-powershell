@@ -862,7 +862,16 @@ namespace Microsoft.Azure.Commands.WebApps.Utilities
             return WrappedWebsitesClient.WebApps().UpdateSlotConfigurationNames(resourceGroupName, webSiteName, slotConfigNames);
         }
 
-        public void SwapSlot(
+    public AppServiceEnvironmentResource GetAppServiceEnvironment(string resourceGroupName, string appServiceEnvironmentName)
+    {
+      return WrappedWebsitesClient.AppServiceEnvironments.Get(resourceGroupName, appServiceEnvironmentName);
+    }
+
+    public IList<AppServiceEnvironmentResource> ListAppServiceEnvironments(string resourceGroupName) {
+      return WrappedWebsitesClient.AppServiceEnvironments.ListByResourceGroup(resourceGroupName).ToList();
+    }
+
+    public void SwapSlot(
             string resourceGroupName, 
             string webSiteName, 
             string sourceSlotName, 
