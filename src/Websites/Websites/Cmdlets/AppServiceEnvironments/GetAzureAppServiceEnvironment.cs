@@ -29,7 +29,7 @@ namespace Microsoft.Azure.Commands.WebApps.Cmdlets.AppServiceEnvironments
   /// this cmdlet will let you Get an Azure App Service Environment using ARM APIs
   /// </summary>
   [Cmdlet("Get", ResourceManager.Common.AzureRMConstants.AzureRMPrefix + "AppServiceEnvironment"), OutputType(typeof(PSAppServiceEnvironment))]
-  class GetAppServiceEnvironmentCmdlet : WebAppBaseClientCmdLet
+  public class GetAppServiceEnvironmentCmdlet : WebAppBaseClientCmdLet
   {
     private const string ParameterSet1 = "S1";
     private const string ParameterSet2 = "S2";
