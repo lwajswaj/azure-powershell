@@ -19,6 +19,7 @@ using Microsoft.Azure.Management.WebSites.Models;
 using Microsoft.Rest.Azure;
 using Microsoft.WindowsAzure.Commands.Utilities.Common;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
@@ -862,16 +863,20 @@ namespace Microsoft.Azure.Commands.WebApps.Utilities
             return WrappedWebsitesClient.WebApps().UpdateSlotConfigurationNames(resourceGroupName, webSiteName, slotConfigNames);
         }
 
-    public AppServiceEnvironmentResource GetAppServiceEnvironment(string resourceGroupName, string appServiceEnvironmentName)
-    {
-      return WrappedWebsitesClient.AppServiceEnvironments.Get(resourceGroupName, appServiceEnvironmentName);
-    }
+        public AppServiceEnvironmentResource GetAppServiceEnvironment(string resourceGroupName, string appServiceEnvironmentName)
+        {
+          return WrappedWebsitesClient.AppServiceEnvironments().GetAppServiceEnvironment(resourceGroupName, appServiceEnvironmentName);
+        }
 
-    public IList<AppServiceEnvironmentResource> ListAppServiceEnvironments(string resourceGroupName) {
-      return WrappedWebsitesClient.AppServiceEnvironments.ListByResourceGroup(resourceGroupName).ToList();
-    }
+        public IList<AppServiceEnvironmentResource> ListAppServiceEnvironments(string resourceGroupName) {
+          return WrappedWebsitesClient.AppServiceEnvironments().GetAppServiceEnvironments(resourceGroupName).ToList();
+        }
 
-    public void SwapSlot(
+        public AppServiceEnvironmentResource CreateOrUpdateAppServiceEnvironment(string resourceGroupName, string name, AppServiceEnvironmentResource hostingEnvironmentEnvelope) {
+          return WrappedWebsitesClient.AppServiceEnvironments().CreateOrUpdateHostingEnvironment(resourceGroupName, name, hostingEnvironmentEnvelope);
+        }
+
+        public void SwapSlot(
             string resourceGroupName, 
             string webSiteName, 
             string sourceSlotName, 

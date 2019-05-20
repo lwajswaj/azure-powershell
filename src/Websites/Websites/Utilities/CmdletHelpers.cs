@@ -57,6 +57,9 @@ namespace Microsoft.Azure.Commands.WebApps.Utilities
         private const string ApplicationServiceEnvironmentResourceIdFormat =
             "/subscriptions/{0}/resourcegroups/{1}/providers/Microsoft.Web/{2}/{3}";
 
+        private const string ParentResourceIdFormat =
+                "/subscriptions/{0}/resourcegroups/{1}/providers/{2}/{3}";
+
         public const string DocerRegistryServerUrl = "DOCKER_REGISTRY_SERVER_URL";
         public const string DocerRegistryServerUserName = "DOCKER_REGISTRY_SERVER_USERNAME";
         public const string DocerRegistryServerPassword = "DOCKER_REGISTRY_SERVER_PASSWORD";
@@ -69,7 +72,12 @@ namespace Microsoft.Azure.Commands.WebApps.Utilities
                 .ToDictionary(kvp => kvp.Key.ToString(), kvp => kvp.Value.ToString(), StringComparer.Ordinal);
         }
 
-        public static Dictionary<string, ConnStringValueTypePair> ConvertToConnectionStringDictionary(this Hashtable hashtable)
+    public static List<NameValuePair> ConvertToNameValuePairList(this Hashtable hashtable)
+    {
+      return hashtable?.Cast<NameValuePair>().ToList();
+    }
+
+    public static Dictionary<string, ConnStringValueTypePair> ConvertToConnectionStringDictionary(this Hashtable hashtable)
         {
             return hashtable?.Cast<DictionaryEntry>()
                 .ToDictionary(
@@ -372,6 +380,10 @@ namespace Microsoft.Azure.Commands.WebApps.Utilities
                 applicationServiceEnvironmentName);
         }
 
+        internal static string GetParentResourceId(string providerNamespace, string childResourceId) {
+          return string.Format(ParentResourceIdFormat, GetSubscriptionFromResourceId(childResourceId), GetResourceGroupFromResourceId(childResourceId), providerNamespace, GetParentResourceFromResourceId(childResourceId));
+        }
+
         internal static HostNameSslState[] GetHostNameSslStatesFromSiteResponse(Site site, string hostName = null)
         {
             var hostNameSslState = new HostNameSslState[0];
@@ -389,6 +401,20 @@ namespace Microsoft.Azure.Commands.WebApps.Utilities
         internal static string GetResourceGroupFromResourceId(string resourceId)
         {
             return new ResourceIdentifier(resourceId).ResourceGroupName;
+        }
+
+        internal static string GetParentResourceFromResourceId(string resourceId) {
+          return new ResourceIdentifier(resourceId).ParentResource;
+        }
+
+        internal static string GetResourceFromResourceId(string resourceId)
+        {
+          return new ResourceIdentifier(resourceId).ResourceName;
+        }
+
+        internal static string GetSubscriptionFromResourceId(string resourceId)
+        {
+          return new ResourceIdentifier(resourceId).Subscription;
         }
 
         internal static void ExtractWebAppPropertiesFromWebApp(Site webapp, out string resourceGroupName, out string webAppName, out string slot)

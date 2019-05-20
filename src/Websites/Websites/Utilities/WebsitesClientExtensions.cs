@@ -472,6 +472,31 @@ namespace Microsoft.Azure.Management.WebSites
             return serverFarm.ListMetrics(resourceGroupName, name, details, filter);
         }
 
+        public static IAppServiceEnvironmentsOperations AppServiceEnvironments(this WebSiteManagementClient client)
+        {
+          return client.AppServiceEnvironments;
+        }
+
+        public static AppServiceEnvironmentResource GetAppServiceEnvironment(this IAppServiceEnvironmentsOperations hostingEnvironment,
+                string resourceGroupName, string name)
+        {
+          return hostingEnvironment.Get(resourceGroupName, name);
+        }
+
+        public static IEnumerable<AppServiceEnvironmentResource> GetAppServiceEnvironments(this IAppServiceEnvironmentsOperations hostingEnvironment,
+                string resourceGroupName)
+        {
+          return hostingEnvironment.ListByResourceGroup(resourceGroupName);
+        }
+
+        public static AppServiceEnvironmentResource CreateOrUpdateHostingEnvironment(this IAppServiceEnvironmentsOperations hostingEnvironment,
+                string resourceGroupName,
+                string name,
+                AppServiceEnvironmentResource appServiceEnvironment)
+        {
+          return hostingEnvironment.BeginCreateOrUpdate(resourceGroupName, name, appServiceEnvironment);
+        }
+
         private static bool? ToNullableBool(this string val)
         {
             if(string.IsNullOrWhiteSpace(val))
